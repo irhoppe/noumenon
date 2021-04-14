@@ -12,6 +12,11 @@ div.outer {
   padding: 0;
 }
 
+#info {
+  float: right;
+  vertical-align: bottom;
+}
+
 .leaflet-container {
   background-color: #ffffff !important;
 }

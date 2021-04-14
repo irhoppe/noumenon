@@ -13,7 +13,7 @@ mapkey <- read.csv("data/key.csv", colClasses="character", na.strings="") %>%
     mutate(SRC=case_when(!is.na(XC) ~ sprintf("<audio src=\"%s - %s.mp3\" type=\"audio/mp3\" autoplay controls></audio>", XC, NOUMENON), 
                          is.na(XC) ~ NA_character_) )
 
-eco <- read_sf("data/na_cec_eco_l2") %>% st_transform(4326) %>% 
+eco <- read_sf("Noumenon/data/na_cec_eco_l2") %>% st_transform(4326) %>% 
     mutate( NOUMENON=mapkey$NOUMENON[match(NA_L2CODE,mapkey$NA_L2CODE)], 
             XC=mapkey$XC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
             AUDIO=mapkey$SRC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
@@ -28,7 +28,8 @@ epsg2163 <- leafletCRS(
     crsClass = "L.Proj.CRS",
     code = "EPSG:2163",
     proj4def = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs",
-    resolutions = 2^(16:7))
+    resolutions = 2^(16:7)
+)
 
 er_pal <- colorFactor(mapkey$COLOR, domain=mapkey$NA_L2CODE)
 
@@ -37,12 +38,12 @@ ui <- fluidPage(
     tags$head(
         tags$link(rel="stylesheet", type="text/css", href="style.css")
     ), 
-
-    titlePanel("N O U M E N O N"),
     
-    div( class="outer", 
+    div(class="outer", 
         leafletOutput("map", width="100%", height="100%")
-    )
+    ), 
+    
+    actionButton("info", label="", icon=icon("info"))
     
 )
 
@@ -55,6 +56,16 @@ server <- function(input, output) {
                         popup=~LABEL) %>% 
             addGraticule(interval=10, style=list(color="#a1def7", weight=0.5))
     })
+    
+    observeEvent( input$info, {
+        showModal(modalDialog(
+            title="N O U M E N O N", 
+            HTML("An audiovisual guide to the avian soul of North America<br/>"), 
+            HTML("Spatial data: <a href=https://www.epa.gov/eco-research/ecoregions-north-america>EPA</a><br/>"), 
+            HTML("Audio data: <a href=https://www.xeno-canto.org>xeno-canto</a>")
+        ))
+    })
+    
 }
 
 # Run the application 
