@@ -13,7 +13,7 @@ mapkey <- read.csv("data/key.csv", colClasses="character", na.strings="") %>%
     mutate(SRC=case_when(!is.na(XC) ~ sprintf("<audio src=\"%s - %s.mp3\" type=\"audio/mp3\" autoplay controls></audio>", XC, NOUMENON), 
                          is.na(XC) ~ NA_character_) )
 
-eco <- read_sf("Noumenon/data/na_cec_eco_l2") %>% st_transform(4326) %>% 
+eco <- read_sf("data/na_cec_eco_l2") %>% st_transform(4326) %>% 
     mutate( NOUMENON=mapkey$NOUMENON[match(NA_L2CODE,mapkey$NA_L2CODE)], 
             XC=mapkey$XC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
             AUDIO=mapkey$SRC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
