@@ -15,13 +15,18 @@ mapkey <- read.csv("data/key.csv", colClasses="character", na.strings="") %>%
 
 eco <- read_sf("data/na_cec_eco_l2") %>% st_transform(4326) %>% 
     mutate( NOUMENON=mapkey$NOUMENON[match(NA_L2CODE,mapkey$NA_L2CODE)], 
-            XC=mapkey$XC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
             AUDIO=mapkey$SRC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
-            LABEL=sprintf(
-                "<b>%s</b><br/>
-                %s<br/>
-                %s<br/>
-                %s", totitle(NA_L2NAME), NOUMENON, AUDIO, XC
+            XC=mapkey$XC[match(NA_L2CODE,mapkey$NA_L2CODE)], 
+            RECORDIST=mapkey$RECORDIST[match(NA_L2CODE,mapkey$NA_L2CODE)], 
+            LABEL=case_when(
+                !is.na(AUDIO) ~ sprintf(
+                    "<b>%s</b><br/>
+                    %s<br/>
+                    %s<br/>
+                    <a href=https://xeno-canto.org/%s>%s</a>
+                    <div style=\"float:right\">%s</div>", totitle(NA_L2NAME), NOUMENON, AUDIO, gsub("^XC","",XC), XC, RECORDIST
+                ), 
+                TRUE ~ sprintf("<b>%s</b>", totitle(NA_L2NAME))
             ))
 
 epsg2163 <- leafletCRS(
@@ -61,7 +66,7 @@ server <- function(input, output) {
         showModal(modalDialog(
             title="N O U M E N O N", 
             HTML("An audiovisual guide to the avian soul of North America<br/>"), 
-            HTML("Spatial data: <a href=https://www.epa.gov/eco-research/ecoregions-north-america>EPA</a><br/>"), 
+            HTML("Spatial data: <a href=https://www.epa.gov/eco-research/ecoregions-north-america>U. S. Environmental Protection Agency</a><br/>"), 
             HTML("Audio data: <a href=https://www.xeno-canto.org>xeno-canto</a>")
         ))
     })
