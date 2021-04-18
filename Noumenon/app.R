@@ -41,7 +41,7 @@ epsg2163 <- leafletCRS(
     resolutions = 2^(16:7)
 )
 
-er_pal <- colorFactor(mapkey$COLOR, domain=mapkey$NA_L2CODE)
+er_pal <- colorFactor(mapkey$COLOR, domain=mapkey$NA_L2CODE, ordered=TRUE)
 
 ui <- fluidPage(
     
